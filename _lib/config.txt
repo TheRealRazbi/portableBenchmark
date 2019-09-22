@@ -1,1 +1,2 @@
-10
+samples=10
+screenshot_after_benchmark=false

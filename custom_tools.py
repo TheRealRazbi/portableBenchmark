@@ -83,12 +83,27 @@ class Benchmark:
             raise FileNotFoundError("'_lib' not found or corrupted, aborting...")
         if not os.path.isfile("_lib/config.txt"):
             with open("_lib/config.txt", "w") as f:
-                f.write("10")
+                f.write("samples=10\nscreenshot_after_benchmark=False")
         else:
             if samples_to_take == 10:
                 with open("_lib/config.txt", "r") as f:
-                    samples_to_take = int(f.read())
+                    samples_to_take = int(f.readline()[8:])
+                    if samples_to_take < 1:
+                        raise ValueError(f"Samples amount {samples_to_take} is invalid.")
+            with open("_lib/config.txt", "r") as f:
+                f.readline()
+                line = f.readline()[27:].lower()
+                if line == 'false':
+                    self.allowed_screenshot = False
+                elif line == 'true':
+                    self.allowed_screenshot = True
+                else:
+                    print(f'No clue what {line} means. It must be either "false" or "true" caps insensitive')
+                    print('Program will continue only after a restart if the problem was solved')
+                    time.sleep(99999999)
+
         self.samples_to_take = samples_to_take
+
 
         self.cpu_brand = cpu_brand
         self.window_manager = WindowMgr()
@@ -160,8 +175,9 @@ class Benchmark:
 
         self.dump_everything()
 
-        self.simplified_dump([datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+        self.simplified_dump([f'{datetime.now().strftime("%m-%d-%Y %H:%M:%S")} | User : {self.e_hunt.username()}',
                               f'SAMPLES TAKEN : {self.samples_to_take}',
+                              f'SCREENSHOT : {self.allowed_screenshot}',
                               f'\nCPU NAME : {self.cpu_brand}',
                               f'CPU MIN : {min_cpu_usage}%',
                               f'CPU MAX : {max_cpu_usage}%',
@@ -194,7 +210,7 @@ class Benchmark:
                 "RAM_Dump_E_HUNT": self.e_hunt.memory_info()}
 
     def dump_everything(self):
-        data = [f'{datetime.now().strftime("%m-%d-%Y %H:%M:%S")}\n\nFirst sample is : \n',
+        data = [f'{datetime.now().strftime("%m-%d-%Y %H:%M:%S")} | User : {self.e_hunt.username()}\n\nFirst sample is : \n',
                [self.cpu_stats['sample0'],
                 self.gpu_stats['sample0'],
                 f'{self.memory_stats["sample0"]}'],
@@ -214,7 +230,6 @@ class Benchmark:
                 f.write(f"{data_to_write}\n\n")
 
     def simplified_dump(self, data):
-
         with open(self.simplified_txt_path, "a") as f:
             for item in data:
                 f.write(f"{item}\n")
@@ -227,7 +242,8 @@ class Benchmark:
         os.rename(os.path.join("benchmarks", self.now_str), os.path.join("benchmarks", f"{self.now_str} FINISHED"))
 
     def screenshot_save(self):
-        pyautogui.screenshot(os.path.join("benchmarks", f'{self.now_str}/screenshot.png'))
+        if self.allowed_screenshot:
+            pyautogui.screenshot(os.path.join("benchmarks", f'{self.now_str}/screenshot.png'))
 
 
 if __name__ == '__main__':

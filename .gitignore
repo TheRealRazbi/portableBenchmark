@@ -1,5 +1,7 @@
 benchmarks/
 .idea/
 __pycache__/
-builds/
-*.zip
+builds/dist/
+builds/build/
+builds/build.bat
+*.spec

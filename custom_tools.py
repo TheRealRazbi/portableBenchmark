@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from playsound import playsound
 import statistics
+import pyautogui
 
 
 class WindowMgr:
@@ -52,7 +53,6 @@ def find_e_hunt_pid():
             pass
         else:
             if pinfo["name"] == "The Equinox Hunt.exe":
-                # print(pinfo)
                 return pinfo['pid']
     raise EnvironmentError("Equinox Hunt not found!")
 
@@ -154,6 +154,8 @@ class Benchmark:
 
         total_system_ram = round(psutil.virtual_memory().total/1_073_741_824, 2)
 
+        self.screenshot_save()
+
         playsound(self.path_to_sound_effect)
 
         self.dump_everything()
@@ -210,7 +212,6 @@ class Benchmark:
                 f.write(f"{data_to_write}")
                 data_to_write = self.memory_stats[f"sample{sample_count}"]
                 f.write(f"{data_to_write}\n\n")
-            # f.write(data)
 
     def simplified_dump(self, data):
 
@@ -225,6 +226,9 @@ class Benchmark:
     def finish(self):
         os.rename(os.path.join("benchmarks", self.now_str), os.path.join("benchmarks", f"{self.now_str} FINISHED"))
 
+    def screenshot_save(self):
+        pyautogui.screenshot(os.path.join("benchmarks", f'{self.now_str}/screenshot.png'))
+
 
 if __name__ == '__main__':
     pass
@@ -236,25 +240,11 @@ if __name__ == '__main__':
     b = Benchmark(cpuinfo.get_cpu_info()["brand"])
     b.get_samples()
     print("BENCHMARK DONE")
-
     # e_hunt = psutil.Process(find_e_hunt_pid())
-    # print(e_hunt.memory_info().rss/1_048_576)
-    # print(e_hunt.memory_info().vms/1_048_576)
     # WindowMgr().activate_e_hunt(1.5)
-    #
-    # print(e_hunt.cpu_percent(0.75)/psutil.cpu_count(),
-    #       e_hunt.cpu_percent(0.75)/psutil.cpu_count(),
-    #       e_hunt.cpu_percent(0.75)/psutil.cpu_count(),
-    #       e_hunt.cpu_percent(0.75)/psutil.cpu_count())
-    # # print(e_hunt.memory_info())
     # bnk = Benchmark()
     # bnk.get_samples()
-    # create_benchmark()
-    # create_basic_file_structure()
-    # w = WindowMgr()
-    # w.find_window_wildcard("The Equinox Hunt")
-    # w.set_foreground()
 
-    # 978_153_472
+
 
 

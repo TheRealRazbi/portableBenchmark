@@ -20,8 +20,11 @@ def create_benchmark():
 if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support()
-    import cpuinfo
-    CPU_NAME = cpuinfo.get_cpu_info()["brand"]
+    try:
+        import cpuinfo
+        CPU_NAME = cpuinfo.get_cpu_info()["brand"]
+    except ModuleNotFoundError:
+        CPU_NAME = 'CPU NAME NOT AVAILABLE'
 
     while True:
         keys = key_check()

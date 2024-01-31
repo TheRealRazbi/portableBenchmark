@@ -1,0 +1,27 @@
+#:kivy 1.11.1
+#:import Window kivy.core.window.Window
+
+<BenchmarksDone>:
+	size: 100, 100
+	canvas:
+		Rectangle:
+			pos: self.pos
+			size: self.size
+	#StackLayout:
+
+
+<King>:
+	b_done: bench_done
+
+	#canvas: #
+	#	Rectangle: 
+	#		pos: self.width / 4, 0 
+	#		size: self.width / 2, root.height
+
+	BenchmarksDone:
+		id: bench_done
+		pos: Window.size[0] / 4, 0 
+		size: Window.size[0] / 2, Window.size[1]
+
+
+

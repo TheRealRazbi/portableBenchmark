@@ -67,6 +67,14 @@ def initialize_gpu_monitor():
         res["GPU_DRIVER_VERSION"] = gpu.driver
         return res
 
+    AMD_message = "NVIDIA GPU NOT FOUND"
+    if res == {}:
+        res["GPU_NAME"] = AMD_message
+        res["GPU_ID"] = AMD_message
+        res["GPU_TOTAL_MEMORY"] = AMD_message
+        res["GPU_DRIVER_VERSION"] = AMD_message
+        return res
+
 
 def sample_gpu():
     res = {}
@@ -75,6 +83,9 @@ def sample_gpu():
         res["GPU_LOAD"] = round(gpu.load*100, 4)
         res["GPU_MEMORY_USED"] = gpu.memoryUtil
         return res
+    res["GPU_LOAD"] = 0
+    res["GPU_MEMORY_USED"] = 0
+    return res
 
 
 class Benchmark:
@@ -103,7 +114,6 @@ class Benchmark:
                     time.sleep(99999999)
 
         self.samples_to_take = samples_to_take
-
 
         self.cpu_brand = cpu_brand
         self.window_manager = WindowMgr()
